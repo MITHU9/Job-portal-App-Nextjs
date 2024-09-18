@@ -1,4 +1,5 @@
 import {
+  createFilterCategory,
   fetchJobApplicationsForCandidate,
   fetchJobApplicationsForRecruiter,
   fetchJobsForCandidate,
@@ -8,13 +9,15 @@ import {
 import JobListing from "@/components/job-lists";
 import { currentUser } from "@clerk/nextjs/server";
 
-async function JobsPage() {
+async function JobsPage({ searchParams }) {
+  //console.log(searchParams, "searchParams");
+
   const user = await currentUser();
   const profileInfo = await fetchProfile(user?.id);
 
   const jobList =
     profileInfo?.role === "candidate"
-      ? await fetchJobsForCandidate()
+      ? await fetchJobsForCandidate(searchParams)
       : await fetchJobsForRecruiter(user?.id);
 
   const getApplicationList =
@@ -22,12 +25,15 @@ async function JobsPage() {
       ? await fetchJobApplicationsForCandidate(user?.id)
       : await fetchJobApplicationsForRecruiter(user?.id);
 
+  const fetchFilterCategories = await createFilterCategory();
+
   return (
     <JobListing
       user={JSON.parse(JSON.stringify(user))}
       profileInfo={profileInfo}
       jobList={jobList}
       applicationList={getApplicationList}
+      filterCategories={fetchFilterCategories}
     />
   );
 }

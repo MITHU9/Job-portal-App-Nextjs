@@ -41,9 +41,17 @@ export async function fetchJobsForRecruiter(userId) {
 
 //2. Candidate
 
-export async function fetchJobsForCandidate() {
+export async function fetchJobsForCandidate(filterParams = {}) {
   await connectToDB();
-  const jobs = await Job.find({});
+  let updatedParams = {};
+  Object.keys(filterParams).forEach((filterKey) => {
+    updatedParams[filterKey] = { $in: filterParams[filterKey].split(",") };
+  });
+  //console.log(updatedParams);
+
+  const jobs = await Job.find(
+    filterParams && Object.keys(filterParams).length > 0 ? updatedParams : {}
+  );
   return JSON.parse(JSON.stringify(jobs));
 }
 
@@ -107,4 +115,48 @@ export async function fetchCandidateDetails(candidateID) {
   await connectToDB();
   const candidate = await Profile.findOne({ userId: candidateID });
   return JSON.parse(JSON.stringify(candidate));
+}
+
+// create filter categories
+
+export async function createFilterCategory() {
+  await connectToDB();
+  const category = await Job.find({});
+  return JSON.parse(JSON.stringify(category));
+}
+
+//Update Profile Action
+
+export async function updateProfile(data, pathToRevalidate) {
+  await connectToDB();
+  const {
+    userId,
+    role,
+    email,
+    isPremiumUser,
+    memberShipType,
+    memberShipStartDate,
+    memberShipEndDate,
+    recruiterInfo,
+    candidateInfo,
+    _id,
+  } = data;
+  await Profile.findOneAndUpdate(
+    {
+      _id: _id,
+    },
+    {
+      userId,
+      role,
+      email,
+      isPremiumUser,
+      memberShipType,
+      memberShipStartDate,
+      memberShipEndDate,
+      recruiterInfo,
+      candidateInfo,
+    },
+    { new: true }
+  );
+  revalidatePath(pathToRevalidate);
 }

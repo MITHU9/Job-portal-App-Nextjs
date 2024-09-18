@@ -1,3 +1,5 @@
+import qs from "query-string";
+
 export const recruiterOnboardFormControls = [
   {
     componentType: "input",
@@ -113,8 +115,8 @@ export const candidateOnboardFormControls = [
   },
   {
     componentType: "input",
-    label: "Graduated Year",
-    name: "graduatedYear",
+    label: "graduation Year",
+    name: "graduationYear",
     required: true,
     placeholder: "Enter Your Graduated Year",
   },
@@ -147,7 +149,24 @@ export const initialCandidateFormData = {
   totalExperience: "",
   college: "",
   collegeLocation: "",
-  graduatedYear: "",
+  graduationYear: "",
+  linkedinProfile: "",
+  githubProfile: "",
+};
+
+export const initialCandidateAccountFormData = {
+  name: "",
+  currentCompany: "",
+  currentJobLocation: "",
+  preferJobLocation: "",
+  currentSalary: "",
+  noticePeriod: "",
+  skills: "",
+  previousCompanies: "",
+  totalExperience: "",
+  college: "",
+  collegeLocation: "",
+  graduationYear: "",
   linkedinProfile: "",
   githubProfile: "",
 };
@@ -222,3 +241,42 @@ export const initialPostNewJobFormData = {
   skills: "",
   salary: "",
 };
+
+export const filterMenuItems = [
+  {
+    id: "companyName",
+    label: "Company Name",
+  },
+  {
+    id: "location",
+    label: "Location",
+  },
+  {
+    id: "type",
+    label: "Type",
+  },
+  {
+    id: "title",
+    label: "Title",
+  },
+];
+
+export function formUrlQuery({ params, dataToAdd }) {
+  let currentURL = qs.parse(params);
+
+  if (Object.keys(dataToAdd).length > 0) {
+    Object.keys(dataToAdd).map((key) => {
+      if (dataToAdd[key].length === 0) delete currentURL[key];
+      else currentURL[key] = dataToAdd[key].join(",");
+    });
+  }
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query: currentURL,
+    },
+    {
+      skipNull: true,
+    }
+  );
+}

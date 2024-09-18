@@ -62,7 +62,7 @@ function OnBoard() {
   function handleTabChange(value) {
     setCurrentTab(value);
   }
-  //console.log(recruiterFormData);
+  console.log(candidateFormData);
 
   function handleRecruiterFormValid() {
     return (

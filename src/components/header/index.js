@@ -40,8 +40,9 @@ function Header({ user, profileInfo }) {
               {menuItems.map((item) =>
                 item.show ? (
                   <Link
-                    className="flex w-full items-center py-2 text-lg font-semibold"
+                    className="group inline-flex w-full items-center py-2 text-lg font-semibold"
                     href={item.path}
+                    onClick={() => sessionStorage.removeItem("filterParams")}
                     key={item.label}
                   >
                     {item.label}
