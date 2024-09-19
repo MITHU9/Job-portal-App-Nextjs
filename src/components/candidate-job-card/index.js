@@ -13,14 +13,28 @@ import CommonCard from "../common-card";
 import JobIcon from "../job-icon";
 import { Button } from "../ui/button";
 import { createJobApplication } from "@/actions";
+import { useToast } from "@/hooks/use-toast";
 
 function CandidateJobCard({ jobItem, profileInfo, applicationList }) {
   //console.log(applicationList, "CandidateJobCard");
   // console.log(jobItem?.recruiterId);
 
   const [showJobDetailsDrawer, setShowJobDetailsDrawer] = useState(false);
+  const { toast } = useToast();
 
   async function handleJobApply() {
+    if (!profileInfo?.isPremium && applicationList.length === 2) {
+      setShowJobDetailsDrawer(false);
+      toast({
+        variant: "destructive",
+        title: "you can apply max 2 jobs ",
+        description: "Please get subscription for apply more jobs",
+        action: <Link href={"./membership"}>Choose Plan</Link>,
+      });
+
+      return;
+    }
+
     await createJobApplication(
       {
         recruiterUserID: jobItem?.recruiterId,

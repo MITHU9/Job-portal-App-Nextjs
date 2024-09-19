@@ -17,7 +17,7 @@ function CommonCard({ title, icon, description, footerContent }) {
           </CardTitle>
         ) : null}
         {description ? (
-          <CardDescription className="text-md mt-3 to-gray-600">
+          <CardDescription className="text-md mt-3 to-gray-600 font-semibold">
             {description}
           </CardDescription>
         ) : null}

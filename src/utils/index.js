@@ -280,3 +280,24 @@ export function formUrlQuery({ params, dataToAdd }) {
     }
   );
 }
+
+export const membershipPlan = [
+  {
+    type: "basic",
+    heading: "Basic",
+    price: 100,
+    description: "Basic Membership allows you to apply or post more job",
+  },
+  {
+    type: "standard",
+    heading: "Standard",
+    price: 200,
+    description: "Basic Membership allows you to apply or post more job",
+  },
+  {
+    type: "premium",
+    heading: "Premium",
+    price: 5000,
+    description: "Basic Membership allows you to apply or post more job",
+  },
+];

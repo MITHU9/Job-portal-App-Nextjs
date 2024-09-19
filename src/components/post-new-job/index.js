@@ -6,13 +6,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { initialPostNewJobFormData, postNewJobFormControls } from "@/utils";
 import CommonForm from "../common-form";
 import { createJob } from "@/actions";
+import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
-function PostNewJob({ user, profileInfo }) {
+function PostNewJob({ user, profileInfo, jobList }) {
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [jobFormData, setJobFormData] = useState({
     ...initialPostNewJobFormData,
     companyName: profileInfo?.recruiterInfo?.companyName,
   });
+  const toast = useToast();
 
   function handlePostNewBtnValid() {
     return Object.keys(jobFormData).every(
@@ -35,10 +38,23 @@ function PostNewJob({ user, profileInfo }) {
       });
   }
 
+  function handleAddNewJob() {
+    if (!profileInfo?.isPremium && jobList.length === 2) {
+      toast({
+        variant: "destructive",
+        title: "you can post max 2 jobs ",
+        description: "Please get subscription for post more jobs",
+        action: <Link href={"./membership"}>Choose Plan</Link>,
+      });
+      return;
+    }
+    setShowJobDialog(true);
+  }
+
   return (
     <div>
       <Button
-        onClick={() => setShowJobDialog(true)}
+        onClick={handleAddNewJob}
         className="disabled:opacity-60 flex h-11 items-center justify-center px-5"
       >
         Post a Job

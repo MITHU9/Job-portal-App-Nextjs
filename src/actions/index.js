@@ -6,6 +6,10 @@ import Job from "@/models/job";
 import Profile from "@/models/profile";
 import { revalidatePath } from "next/cache";
 
+const stripe = require("stripe")(
+  "sk_test_51Q0ki9C2RXSWTJqgOQ2miF3bi1x1wXfGvhxWLajpqBUSHuOe2JM1bsF9906oHUDXWI3WJtek3e7gANHHTM2KD25a00VrBRyXPZ"
+);
+
 //Create Profile actions
 export async function createProfile(formData, pathToRevalidate) {
   await connectToDB();
@@ -134,7 +138,7 @@ export async function updateProfile(data, pathToRevalidate) {
     role,
     email,
     isPremiumUser,
-    memberShipType,
+    membershipType,
     memberShipStartDate,
     memberShipEndDate,
     recruiterInfo,
@@ -150,7 +154,7 @@ export async function updateProfile(data, pathToRevalidate) {
       role,
       email,
       isPremiumUser,
-      memberShipType,
+      membershipType,
       memberShipStartDate,
       memberShipEndDate,
       recruiterInfo,
@@ -159,4 +163,39 @@ export async function updateProfile(data, pathToRevalidate) {
     { new: true }
   );
   revalidatePath(pathToRevalidate);
+}
+
+// create stripe price id based on current selection
+
+export async function createPriceId(data) {
+  const session = await stripe.prices.create({
+    currency: "inr",
+    unit_amount: data?.amount * 100,
+    recurring: {
+      interval: "year",
+    },
+    product_data: {
+      name: "Premium Plan",
+    },
+  });
+  return {
+    success: true,
+    id: session?.id,
+  };
+}
+
+//create payment logic
+
+export async function createPayment(data) {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: data?.lineItems,
+    mode: "subscription",
+    success_url: "http://localhost:3000/membership" + "?status=success",
+    cancel_url: "http://localhost:3000/membership" + "?status=cancel",
+  });
+  return {
+    success: true,
+    id: session?.id,
+  };
 }
